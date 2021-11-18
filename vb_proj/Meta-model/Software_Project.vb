@@ -211,10 +211,12 @@ Public Class Software_Project
 
     Public Sub Create_Package()
 
+        Dim proposed_directory As String = Path.GetDirectoryName(Me.Xml_File_Path)
+
         Dim pkg_creation_form As New New_Recordable_Element_Form(
             "New_Package",
             "A good description is always useful.",
-            "",
+            proposed_directory,
             "New_Package",
             Top_Level_Package.Package_File_Extension,
             New_Recordable_Element_Form.Recordable_Element_Kind.PACKAGE)
