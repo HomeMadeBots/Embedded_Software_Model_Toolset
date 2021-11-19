@@ -1,7 +1,15 @@
-﻿Public Class Package
+﻿Imports System.Xml.Serialization
+
+Public Class Package
     Inherits Software_Element
 
     Public Packages As New List(Of Package)
+
+    <XmlArrayItemAttribute(GetType(Basic_Integer_Type)),
+     XmlArrayItemAttribute(GetType(Basic_Boolean_Type)),
+     XmlArrayItemAttribute(GetType(Basic_Floating_Point_Type)),
+     XmlArray("Types")>
+    Public Types As New List(Of Type)
 
     Private Shared Context_Menu As New Package_Context_Menu()
 
@@ -30,6 +38,7 @@
         If IsNothing(Me.Children) Then
             Me.Children = New List(Of Software_Element)
             Me.Children.AddRange(Me.Packages)
+            Me.Children.AddRange(Me.Types)
         End If
         Return Me.Children
     End Function

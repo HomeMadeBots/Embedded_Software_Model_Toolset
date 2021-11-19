@@ -3,7 +3,7 @@
   <Name>Basic_Types</Name>
   <UUID>35865e57-e35c-48d4-a100-72230e456b6b</UUID>
   <Description>This package provides pre-defined basic data types which represent the types that any micro-controller could natively handle.</Description>
-  <Data_Types>
+  <Types>
     <Basic_Integer_Type>
       <Name>sint8</Name>
       <Description>Pre-defined basic data types which allows to model a data representing a signed integer value from -128 to 127.</Description>
@@ -69,5 +69,5 @@
       <Description></Description>
       <UUID>d74c7bfa-9e57-443f-ab99-96ab3cdcce0b</UUID>
     </Basic_Floating_Point_Type>
-  </Data_Types>
+  </Types>
 </Top_Level_Package>

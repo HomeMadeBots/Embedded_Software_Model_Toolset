@@ -65,6 +65,7 @@
         With Me.Model_Browser.ImageList.Images
             .Add("Project", My.Resources.Project)
             .Add("Package", My.Resources.Package)
+            .Add("Basic_Type", My.Resources.Basic_Type)
         End With
 
 
