@@ -7,6 +7,7 @@
     Public Sub New()
         Me.Items.AddRange(New ToolStripItem() {
             Me.Menu_Edit,
+            Me.Menu_View,
             Me.Menu_Remove,
             New ToolStripSeparator,
             Me.Menu_Add_Package})

@@ -154,4 +154,9 @@ Public MustInherit Class Software_Element
         End If
     End Sub
 
+    Public Overridable Sub View()
+        Dim elmt_view_form As New View_Form(Me.Name, Me.UUID.ToString, Me.Description)
+        elmt_view_form.ShowDialog()
+    End Sub
+
 End Class

@@ -12,6 +12,7 @@
         Me.Items.AddRange(New ToolStripItem() {
             Me.Menu_Save,
             Me.Menu_Edit,
+            Me.Menu_View,
             New ToolStripSeparator,
             Me.Menu_Add_Existing_Package,
             Me.Menu_Add_Existing_Readable_Package,

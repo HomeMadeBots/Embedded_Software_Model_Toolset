@@ -9,6 +9,7 @@
             Me.Menu_Remove,
             Me.Menu_Display_Path,
             New ToolStripSeparator,
+            Me.Menu_View,
             Me.Menu_Make_Writable})
     End Sub
 
