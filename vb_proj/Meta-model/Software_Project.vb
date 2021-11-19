@@ -201,7 +201,7 @@ Public Class Software_Project
                     Me.Node,
                     is_writable)
                 If Not IsNothing(loaded_pkg) Then
-                    Me.Record_Package(loaded_pkg.Name, pkg_file_path, True)
+                    Me.Record_Package(loaded_pkg.Name, pkg_file_path, is_writable)
                     Me.Top_Level_Packages_List.Add(loaded_pkg)
                     Me.Display_Modified()
                 End If

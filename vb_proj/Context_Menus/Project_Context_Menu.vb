@@ -5,7 +5,7 @@
     Private WithEvents Menu_Save As New ToolStripMenuItem("Save")
     Private WithEvents Menu_Add_Existing_Package As New ToolStripMenuItem("Add existing Package")
     Private WithEvents Menu_Add_Existing_Readable_Package As _
-        New ToolStripMenuItem("Add existing Package (red only)")
+        New ToolStripMenuItem("Add existing Package (read only)")
     Private WithEvents Menu_Add_New_Package As New ToolStripMenuItem("Add new Package")
 
     Public Sub New()
@@ -14,6 +14,7 @@
             Me.Menu_Edit,
             New ToolStripSeparator,
             Me.Menu_Add_Existing_Package,
+            Me.Menu_Add_Existing_Readable_Package,
             Me.Menu_Add_New_Package})
     End Sub
 
