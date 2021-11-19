@@ -74,6 +74,10 @@ Public Class Package
         parent_pkg.Packages.Remove(Me)
     End Sub
 
+    Protected Overrides Function Get_Writable_Context_Menu() As ContextMenuStrip
+        Return Package.Context_Menu
+    End Function
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu

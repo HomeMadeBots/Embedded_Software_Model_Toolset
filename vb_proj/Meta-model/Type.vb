@@ -25,7 +25,7 @@ Public MustInherit Class Basic_Type
         Me.Node = New TreeNode(Me.Name) With {
             .ImageKey = "Basic_Type",
             .SelectedImageKey = "Basic_Type",
-            .ContextMenuStrip = Nothing,
+            .ContextMenuStrip = Software_Element.Read_Only_Context_Menu,
             .Tag = Me}
     End Sub
 
@@ -36,6 +36,10 @@ Public MustInherit Class Basic_Type
     Protected Overrides Sub Remove_Me()
         Throw New Exception("A Basic Type cannot be removed.")
     End Sub
+
+    Protected Overrides Function Get_Writable_Context_Menu() As ContextMenuStrip
+        Return Software_Element.Read_Only_Context_Menu
+    End Function
 
 End Class
 

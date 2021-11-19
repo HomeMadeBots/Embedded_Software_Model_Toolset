@@ -75,6 +75,11 @@ Public Class Software_Project
         ' Currently not needed, a project cannot be removed.
     End Sub
 
+    Protected Overrides Function Get_Writable_Context_Menu() As ContextMenuStrip
+        Throw New Exception("Project contextual menu shall not be modified.")
+        Return Nothing
+    End Function
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Loading method

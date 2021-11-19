@@ -61,6 +61,11 @@ Public Class Top_Level_Package
         Return False
     End Function
 
+    Protected Overrides Function Get_Writable_Context_Menu() As ContextMenuStrip
+        Return Top_Level_Package.Writable_Context_Menu
+    End Function
+
+
     ' -------------------------------------------------------------------------------------------- '
     ' Various method
     ' -------------------------------------------------------------------------------------------- '
@@ -207,17 +212,28 @@ Public Class Top_Level_Package
         Me.Status = E_PACKAGE_STATUS.READABLE
         Me.Update_Display()
         Me.Node.ContextMenuStrip = Top_Level_Package.Readable_Context_Menu
+        If Not IsNothing(Children) Then
+            For Each child In Me.Children
+                child.Apply_Read_Only_Context_Menu()
+            Next
+        End If
     End Sub
 
     Public Sub Make_Writable()
         Me.Status = E_PACKAGE_STATUS.WRITABLE
         Me.Update_Display()
         Me.Node.ContextMenuStrip = Top_Level_Package.Writable_Context_Menu
+        If Not IsNothing(Children) Then
+            For Each child In Me.Children
+                child.Apply_Writable_Context_Menu()
+            Next
+        End If
     End Sub
 
     Private Function Get_Project() As Software_Project
         Return CType(Me.Node.Parent.Tag, Software_Project)
     End Function
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu

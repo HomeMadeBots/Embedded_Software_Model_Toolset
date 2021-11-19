@@ -13,6 +13,9 @@ Public MustInherit Class Software_Element
 
     Protected Shared Valid_Symbol_Regex As String = "^[a-zA-Z][a-zA-Z0-9_]+$"
 
+    Protected Shared Read_Only_Context_Menu As New Read_Only_Context_Menu
+
+
     ' -------------------------------------------------------------------------------------------- '
     ' Constructors
     ' -------------------------------------------------------------------------------------------- '
@@ -65,7 +68,7 @@ Public MustInherit Class Software_Element
         Me.Create_Node()
         parent_node.Nodes.Add(Me.Node)
         If Not Me.Get_Top_Package().Is_Writable() Then
-            Me.Node.ContextMenuStrip = Nothing
+            Me.Node.ContextMenuStrip = Software_Element.Read_Only_Context_Menu
         End If
         Dim children As List(Of Software_Element) = Me.Get_Children()
         If Not IsNothing(children) Then
@@ -121,6 +124,26 @@ Public MustInherit Class Software_Element
         new_parent.Node.Nodes.Add(Me.Node)
 
     End Sub
+
+    Public Sub Apply_Read_Only_Context_Menu()
+        Me.Node.ContextMenuStrip = Software_Element.Read_Only_Context_Menu
+        If Not IsNothing(Me.Children) Then
+            For Each child In Me.Children
+                child.Apply_Read_Only_Context_Menu()
+            Next
+        End If
+    End Sub
+
+    Public Sub Apply_Writable_Context_Menu()
+        Me.Node.ContextMenuStrip = Me.Get_Writable_Context_Menu()
+        If Not IsNothing(Me.Children) Then
+            For Each child In Me.Children
+                child.Apply_Writable_Context_Menu()
+            Next
+        End If
+    End Sub
+
+    Protected MustOverride Function Get_Writable_Context_Menu() As ContextMenuStrip
 
     Protected MustOverride Sub Move_Me(new_parent As Software_Element)
 
