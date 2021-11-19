@@ -3,12 +3,20 @@
     Inherits Element_Context_Menu
 
     Protected WithEvents Menu_Remove As New ToolStripMenuItem("Remove from project")
+    Protected WithEvents Menu_Display_Path As New ToolStripMenuItem("Display file path")
 
     Protected Sub Remove(
             ByVal sender As Object,
             ByVal e As EventArgs) Handles Menu_Remove.Click
         Dim pkg_name As String = Get_Top_Package(sender).Name
         Get_Project(sender).Remove_Package(pkg_name)
+    End Sub
+
+    Protected Sub Display(
+            ByVal sender As Object,
+            ByVal e As EventArgs) Handles Menu_Display_Path.Click
+        Dim pkg_name As String = Get_Top_Package(sender).Name
+        Get_Project(sender).Display_Package_File_Path(pkg_name)
     End Sub
 
     Protected Shared Function Get_Top_Package(sender As Object) As Top_Level_Package

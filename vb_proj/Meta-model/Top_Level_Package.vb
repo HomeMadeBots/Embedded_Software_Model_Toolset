@@ -16,12 +16,11 @@ Public Class Top_Level_Package
     End Enum
 
     Private Xml_File_Path As String
-    Private Status As E_PACKAGE_STATUS
+    Private Status As E_PACKAGE_STATUS = E_PACKAGE_STATUS.WRITABLE
 
     Private Shared Writable_Context_Menu As New Top_Package_Writable_Context_Menu
     Private Shared Readable_Context_Menu As New Top_Package_Readable_Context_Menu
     Private Shared Unloaded_Context_Menu As New Top_Package_Unloaded_Context_Menu
-
 
     Private Shared Pkg_Serializer As XmlSerializer = New XmlSerializer(GetType(Top_Level_Package))
 
@@ -42,9 +41,7 @@ Public Class Top_Level_Package
             file_path As String)
         MyBase.New(name, description, Nothing, parent_node)
         Me.Xml_File_Path = file_path
-        Me.UUID = Guid.NewGuid()
         Me.Status = E_PACKAGE_STATUS.WRITABLE
-        Me.Packages = New List(Of Package)
         Me.Save()
     End Sub
 
@@ -157,8 +154,8 @@ Public Class Top_Level_Package
         pkg = CType(Top_Level_Package.Pkg_Serializer.Deserialize(reader), Top_Level_Package)
         reader.Close()
         file_stream.Close()
-        pkg.Post_Treat_After_Deserialization(parent_node)
         pkg.Status = E_PACKAGE_STATUS.LOCKED
+        pkg.Post_Treat_After_Deserialization(parent_node)
         pkg.Update_Display()
     End Sub
 
@@ -205,14 +202,33 @@ Public Class Top_Level_Package
         Me.Node.Remove()
     End Sub
 
+    Public Sub Make_Read_Only()
+        Me.Save()
+        Me.Status = E_PACKAGE_STATUS.READABLE
+        Me.Update_Display()
+        Me.Node.ContextMenuStrip = Top_Level_Package.Readable_Context_Menu
+    End Sub
+
+    Public Sub Make_Writable()
+        Me.Status = E_PACKAGE_STATUS.WRITABLE
+        Me.Update_Display()
+        Me.Node.ContextMenuStrip = Top_Level_Package.Writable_Context_Menu
+    End Sub
+
+    Private Function Get_Project() As Software_Project
+        Return CType(Me.Node.Parent.Tag, Software_Project)
+    End Function
+
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu
     ' -------------------------------------------------------------------------------------------- '
 
     Public Overrides Sub Edit()
+        Dim previous_name As String = Me.Name
         MyBase.Edit()
-        ' TODO : modify last known name at project level
-        Throw New System.Exception("TODO : modify last known name at project level")
+        If previous_name <> Me.Name Then
+            Me.Get_Project().Update_Pkg_Known_Name(previous_name, Me.Name)
+        End If
     End Sub
 
     Public Sub Save()

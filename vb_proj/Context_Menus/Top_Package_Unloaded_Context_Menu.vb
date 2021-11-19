@@ -5,7 +5,8 @@ Public Class Top_Package_Unloaded_Context_Menu
 
     Public Sub New()
         Me.Items.AddRange(New ToolStripItem() {
-            Me.Menu_Remove})
+            Me.Menu_Remove,
+            Me.Menu_Display_Path})
     End Sub
 
 End Class

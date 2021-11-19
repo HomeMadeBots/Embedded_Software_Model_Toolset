@@ -18,6 +18,7 @@
             owner As Software_Element,
             parent_node As TreeNode)
         MyBase.New(name, description, owner, parent_node)
+        Me.Packages = New List(Of Package)
     End Sub
 
 

@@ -31,9 +31,6 @@ Public MustInherit Class Software_Element
         Me.Owner = owner
         Me.Create_Node()
         parent_node.Nodes.Add(Me.Node)
-        If Not Me.Get_Top_Package().Is_Writable() Then
-            Me.Node.ContextMenuStrip = Nothing
-        End If
     End Sub
 
 

@@ -45,6 +45,9 @@ Public Class ESMT_Application
 
             Me.Loaded_Project.Add_Predefined_Package()
 
+            ' Save 'Last_Known_Name's updates
+            Me.Loaded_Project.Save()
+
         End If
 
     End Sub

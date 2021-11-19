@@ -13,7 +13,6 @@ Public Class Software_Project
     Private Xml_File_Path As String
     Private Top_Level_Packages_List As New List(Of Top_Level_Package)
 
-
     Public Shared ReadOnly Project_File_Extension As String = ".prjx"
 
     Private Shared Context_Menu As New Project_Context_Menu
@@ -118,6 +117,8 @@ Public Class Software_Project
                     new_pkg_path,
                     new_sw_proj.Node,
                     pkg_ref.Is_Writable)
+
+                pkg_ref.Last_Known_Name = new_pkg.Name
 
                 If Not IsNothing(new_pkg) Then
                     new_sw_proj.Top_Level_Packages_List.Add(new_pkg)
@@ -268,6 +269,71 @@ Public Class Software_Project
 
     End Sub
 
+    Public Sub Display_Package_File_Path(pkg_name As String)
+        For Each ref In Me.Packages_References_List
+            If ref.Last_Known_Name = pkg_name Then
+                MsgBox(
+                    pkg_name & "file path :" & vbCrLf &
+                    "relative : " & ref.Relative_Path & vbCrLf &
+                    "local : " & ref.Get_Full_Path(),
+                    MsgBoxStyle.Information,
+                    "Package file path")
+                Exit Sub
+            End If
+        Next
+        ' Reached if package not found
+        Throw New Exception("Package not found !")
+    End Sub
+
+    Public Sub Make_Package_Read_Only(pkg_name As String)
+
+        For Each pkg In Me.Top_Level_Packages_List
+            If pkg.Name = pkg_name Then
+                pkg.Make_Read_Only()
+                Exit For
+            End If
+        Next
+
+        For Each ref In Me.Packages_References_List
+            If ref.Last_Known_Name = pkg_name Then
+                ref.Is_Writable = False
+                Exit For
+            End If
+        Next
+
+        Me.Display_Modified()
+
+    End Sub
+
+    Public Sub Make_Package_Writable(pkg_name As String)
+
+        For Each pkg In Me.Top_Level_Packages_List
+            If pkg.Name = pkg_name Then
+                pkg.Make_Writable()
+                Exit For
+            End If
+        Next
+
+        For Each ref In Me.Packages_References_List
+            If ref.Last_Known_Name = pkg_name Then
+                ref.Is_Writable = True
+                Exit For
+            End If
+        Next
+
+        Me.Display_Modified()
+
+    End Sub
+
+    Public Sub Update_Pkg_Known_Name(previous_name As String, new_name As String)
+        For Each ref In Me.Packages_References_List
+            If ref.Last_Known_Name = previous_name Then
+                ref.Last_Known_Name = new_name
+                Exit For
+            End If
+        Next
+        Me.Display_Modified()
+    End Sub
 
     ' -------------------------------------------------------------------------------------------- '
     ' Private methods
