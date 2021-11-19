@@ -2,7 +2,7 @@
 
     Inherits Element_Context_Menu
 
-    Protected WithEvents Menu_Remove As New ToolStripMenuItem("Remove from project")
+    Protected Shadows WithEvents Menu_Remove As New ToolStripMenuItem("Remove from project")
     Protected WithEvents Menu_Display_Path As New ToolStripMenuItem("Display file path")
 
     Protected Sub Remove(

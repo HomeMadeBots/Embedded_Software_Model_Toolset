@@ -3,11 +3,18 @@
     Inherits ContextMenuStrip
 
     Protected WithEvents Menu_Edit As New ToolStripMenuItem("Edit")
+    Protected WithEvents Menu_Remove As New ToolStripMenuItem("Remove")
 
     Private Sub Edit(
             ByVal sender As Object,
             ByVal e As EventArgs) Handles Menu_Edit.Click
         Get_Selected_Element(sender).Edit()
+    End Sub
+
+    Private Sub Remove(
+            ByVal sender As Object,
+            ByVal e As EventArgs) Handles Menu_Remove.Click
+        Get_Selected_Element(sender).Remove()
     End Sub
 
     Protected Shared Function Get_Selected_Element(sender As Object) As Software_Element

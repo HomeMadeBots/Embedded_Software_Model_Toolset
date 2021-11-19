@@ -124,6 +124,7 @@ Public MustInherit Class Software_Element
 
     Protected MustOverride Sub Move_Me(new_parent As Software_Element)
 
+    Protected MustOverride Sub Remove_Me()
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu
@@ -137,6 +138,18 @@ Public MustInherit Class Software_Element
             Me.Name = elmt_edit_form.Get_Name()
             Me.Node.Text = Me.Name
             Me.Description = elmt_edit_form.Get_Description()
+            Me.Display_Package_Modified()
+        End If
+    End Sub
+
+    Public Sub Remove()
+        Dim remove_dialog_result As MsgBoxResult
+        remove_dialog_result = MsgBox(
+            "Do you want to remove """ & Me.Name & """ and all its aggregated elements ?",
+             MsgBoxStyle.OkCancel,
+            "Remove element")
+        If remove_dialog_result = MsgBoxResult.Ok Then
+            Me.Remove_Me()
             Me.Display_Package_Modified()
         End If
     End Sub

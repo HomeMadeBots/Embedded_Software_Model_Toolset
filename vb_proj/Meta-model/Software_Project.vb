@@ -68,7 +68,11 @@ Public Class Software_Project
     End Function
 
     Protected Overrides Sub Move_Me(new_parent As Software_Element)
-        ' Currently not needed, a package cannot be moved to a top level package
+        ' Currently not needed.
+    End Sub
+
+    Protected Overrides Sub Remove_Me()
+        ' Currently not needed, a project cannot be removed.
     End Sub
 
 
@@ -246,12 +250,10 @@ Public Class Software_Project
 
     Public Sub Remove_Package(pkg_name As String)
         ' Remove from packages list
-        Dim pkg_idx As Integer = -1
         For Each pkg In Me.Top_Level_Packages_List
             If pkg.Name = pkg_name Then
                 ' Remove node
                 pkg.Delete()
-                pkg_idx = Me.Top_Level_Packages_List.IndexOf(pkg)
                 Me.Top_Level_Packages_List.Remove(pkg)
                 Exit For
             End If

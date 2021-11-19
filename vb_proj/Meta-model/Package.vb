@@ -58,6 +58,13 @@
         CType(new_parent, Package).Packages.Add(Me)
     End Sub
 
+    Protected Overrides Sub Remove_Me()
+        Dim parent_pkg As Package = CType(Me.Owner, Package)
+        Me.Node.Remove()
+        parent_pkg.Children.Remove(Me)
+        parent_pkg.Packages.Remove(Me)
+    End Sub
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu
@@ -73,6 +80,7 @@
                 Me,
                 Me.Node)
             Me.Packages.Add(new_pkg)
+            Me.Children.Add(new_pkg)
             Me.Display_Package_Modified()
         End If
     End Sub
