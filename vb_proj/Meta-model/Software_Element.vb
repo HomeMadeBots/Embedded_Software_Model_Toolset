@@ -14,6 +14,7 @@ Public MustInherit Class Software_Element
     Protected Shared Valid_Symbol_Regex As String = "^[a-zA-Z][a-zA-Z0-9_]+$"
 
     Protected Shared Read_Only_Context_Menu As New Read_Only_Context_Menu
+    Protected Shared Leaf_Context_Menu As New Leaf_Context_Menu
 
 
     ' -------------------------------------------------------------------------------------------- '
@@ -143,7 +144,9 @@ Public MustInherit Class Software_Element
         End If
     End Sub
 
-    Protected MustOverride Function Get_Writable_Context_Menu() As ContextMenuStrip
+    Protected Overridable Function Get_Writable_Context_Menu() As ContextMenuStrip
+        Return Software_Element.Leaf_Context_Menu
+    End Function
 
     Protected MustOverride Sub Move_Me(new_parent As Software_Element)
 

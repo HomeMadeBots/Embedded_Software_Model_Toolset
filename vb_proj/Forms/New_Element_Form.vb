@@ -3,7 +3,7 @@
 
     Private WithEvents Name_TextBox As TextBox
     Private Description_TextBox As RichTextBox
-    Private WithEvents Create_Button As Button
+    Protected WithEvents Create_Button As Button
 
     Private Forbidden_Names As List(Of String)
 

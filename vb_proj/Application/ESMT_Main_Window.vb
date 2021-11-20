@@ -66,6 +66,7 @@
             .Add("Project", My.Resources.Project)
             .Add("Package", My.Resources.Package)
             .Add("Basic_Type", My.Resources.Basic_Type)
+            .Add("Array_Type", My.Resources.Array_Type)
         End With
 
 

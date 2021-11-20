@@ -73,6 +73,9 @@
     <Compile Include="Context_Menus\Element_Context_Menu.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Context_Menus\Leaf_Context_Menu.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Context_Menus\Read_Only_Context_Menu.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -97,10 +100,16 @@
     <Compile Include="Forms\ESMT_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\New_Array_Type_Form.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\New_Element_Form.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Application\main.vb" />
+    <Compile Include="Forms\New_Element_With_Ref_Form.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\View_Form.vb">
       <SubType>Form</SubType>
     </Compile>

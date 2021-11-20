@@ -98,4 +98,28 @@ Public Class Package
         End If
     End Sub
 
+    Public Sub Add_Array_Type()
+        Dim creation_form As New New_Array_Type_Form(
+               "Array",
+               "",
+               Me.Get_Children_Name(),
+               "Base Type",
+               "to do",
+               Nothing,
+               "2")
+        Dim creation_form_result As DialogResult = creation_form.ShowDialog()
+        If creation_form_result = DialogResult.OK Then
+            Dim new_array_type As New Array_Type(
+                creation_form.Get_Name(),
+                creation_form.Get_Description(),
+                Me,
+                Me.Node,
+                CUInt(creation_form.Get_Multiplicity()),
+                Guid.NewGuid)
+            Me.Types.Add(new_array_type)
+            Me.Children.Add(new_array_type)
+            Me.Display_Package_Modified()
+        End If
+    End Sub
+
 End Class
