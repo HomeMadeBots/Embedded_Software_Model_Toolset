@@ -2,8 +2,8 @@
 
     Inherits Element_Context_Menu
 
-    Private WithEvents Menu_Add_Package As New ToolStripMenuItem("Add Package")
-    Private WithEvents Menu_Add_Array_Type As New ToolStripMenuItem("Add Array_Type")
+    Protected WithEvents Menu_Add_Package As New ToolStripMenuItem("Add Package")
+    Protected WithEvents Menu_Add_Array_Type As New ToolStripMenuItem("Add Array_Type")
 
     Public Sub New()
         Me.Items.AddRange(New ToolStripItem() {

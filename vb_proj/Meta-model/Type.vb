@@ -29,6 +29,17 @@
         Return is_allowed
     End Function
 
+    Protected Overrides Sub Move_Me(new_parent As Software_Element)
+        CType(Me.Owner, Package).Types.Remove(Me)
+        CType(new_parent, Package).Types.Add(Me)
+    End Sub
+
+    Protected Overrides Sub Remove_Me()
+        Dim parent_pkg As Package = CType(Me.Owner, Package)
+        Me.Node.Remove()
+        parent_pkg.Types.Remove(Me)
+    End Sub
+
 End Class
 
 
@@ -112,14 +123,6 @@ Public Class Array_Type
             .SelectedImageKey = "Array_Type",
             .ContextMenuStrip = Software_Element.Leaf_Context_Menu,
             .Tag = Me}
-    End Sub
-
-    Protected Overrides Sub Move_Me(new_parent As Software_Element)
-        Throw New NotImplementedException()
-    End Sub
-
-    Protected Overrides Sub Remove_Me()
-        Throw New NotImplementedException()
     End Sub
 
 End Class

@@ -9,7 +9,8 @@ Public MustInherit Class Software_Element
     Protected Node As TreeNode
 
     Protected Owner As Software_Element = Nothing
-    Protected Children As List(Of Software_Element) = Nothing
+    Protected Children As New List(Of Software_Element)
+    Protected Children_Is_Computed As Boolean = False
 
     Protected Shared Valid_Symbol_Regex As String = "^[a-zA-Z][a-zA-Z0-9_]+$"
 
@@ -54,6 +55,15 @@ Public MustInherit Class Software_Element
         Return "A good description is always useful."
     End Function
 
+    Public Shared Function Create_Path_Dictionary_From_List(
+            elmt_list As IEnumerable(Of Software_Element)) As Dictionary(Of String, Software_Element)
+        Dim dico As New Dictionary(Of String, Software_Element)
+        For Each elmt In elmt_list
+            dico.Add(elmt.Get_Path(), elmt)
+        Next
+        Return dico
+    End Function
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Generic methods
@@ -82,14 +92,16 @@ Public MustInherit Class Software_Element
 
     Public Function Get_Top_Package() As Top_Level_Package
         Dim top_pkg As Top_Level_Package
-        Dim parent As Software_Element = Me.Owner
-        If IsNothing(parent) Then
-            top_pkg = CType(Me, Top_Level_Package)
+        Dim current_elmt As Software_Element = Me
+        Dim parent As Software_Element = current_elmt.Owner
+        If IsNothing(parent.Owner) Then
+            top_pkg = CType(current_elmt, Top_Level_Package)
         Else
             While Not IsNothing(parent.Owner)
-                parent = parent.Owner
+                current_elmt = parent
+                parent = current_elmt.Owner
             End While
-            top_pkg = CType(parent, Top_Level_Package)
+            top_pkg = CType(current_elmt, Top_Level_Package)
         End If
         Return top_pkg
     End Function
@@ -152,6 +164,33 @@ Public MustInherit Class Software_Element
 
     Protected MustOverride Sub Remove_Me()
 
+    Protected Function Get_Path() As String
+        Dim my_path As String = Me.Get_Path_Separator() & Me.Name
+        Dim parent As Software_Element = Me.Owner
+        While Not IsNothing(parent.Owner)
+            my_path = parent.Get_Path_Separator() & parent.Name & my_path
+            parent = parent.Owner
+        End While
+        Return my_path
+    End Function
+
+    Protected Overridable Function Get_Path_Separator() As String
+        Return "::"
+    End Function
+
+    Private Function Get_Project() As Software_Project
+        Dim current_element As Software_Element = Me
+        While Not IsNothing(current_element.Owner)
+            current_element = current_element.Owner
+        End While
+        Return CType(current_element, Software_Project)
+    End Function
+
+    Protected Function Get_Type_List_From_Project() As List(Of Type)
+        Return Get_Project().Get_Type_List()
+    End Function
+
+
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu
     ' -------------------------------------------------------------------------------------------- '
@@ -176,12 +215,13 @@ Public MustInherit Class Software_Element
             "Remove element")
         If remove_dialog_result = MsgBoxResult.Ok Then
             Me.Remove_Me()
+            Me.Owner.Children.Remove(Me)
             Me.Display_Package_Modified()
         End If
     End Sub
 
     Public Overridable Sub View()
-        Dim elmt_view_form As New View_Form(Me.Name, Me.UUID.ToString, Me.Description)
+        Dim elmt_view_form As New View_Form(Me.Get_Path(), Me.UUID.ToString, Me.Description)
         elmt_view_form.ShowDialog()
     End Sub
 

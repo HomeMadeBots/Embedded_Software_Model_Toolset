@@ -8,6 +8,7 @@ Public Class Package
     <XmlArrayItemAttribute(GetType(Basic_Integer_Type)),
      XmlArrayItemAttribute(GetType(Basic_Boolean_Type)),
      XmlArrayItemAttribute(GetType(Basic_Floating_Point_Type)),
+     XmlArrayItemAttribute(GetType(Array_Type)),
      XmlArray("Types")>
     Public Types As New List(Of Type)
 
@@ -35,8 +36,8 @@ Public Class Package
     ' -------------------------------------------------------------------------------------------- '
 
     Protected Overrides Function Get_Children() As List(Of Software_Element)
-        If IsNothing(Me.Children) Then
-            Me.Children = New List(Of Software_Element)
+        If Me.Children_Is_Computed = False Then
+            Me.Children_Is_Computed = True
             Me.Children.AddRange(Me.Packages)
             Me.Children.AddRange(Me.Types)
         End If
@@ -61,16 +62,13 @@ Public Class Package
     End Function
 
     Protected Overrides Sub Move_Me(new_parent As Software_Element)
-        Dim pkg_list As List(Of Package)
-        pkg_list = CType(Me.Owner, Package).Packages
-        Dim r As Boolean = pkg_list.Remove(Me)
+        CType(Me.Owner, Package).Packages.Remove(Me)
         CType(new_parent, Package).Packages.Add(Me)
     End Sub
 
     Protected Overrides Sub Remove_Me()
         Dim parent_pkg As Package = CType(Me.Owner, Package)
         Me.Node.Remove()
-        parent_pkg.Children.Remove(Me)
         parent_pkg.Packages.Remove(Me)
     End Sub
 
@@ -99,27 +97,57 @@ Public Class Package
     End Sub
 
     Public Sub Add_Array_Type()
+        ' Build the list of possible referenced type
+        Dim type_list As List(Of Type) = Me.Get_Type_List_From_Project()
+        Dim type_by_path_dict As Dictionary(Of String, Software_Element)
+        type_by_path_dict = Software_Element.Create_Path_Dictionary_From_List(type_list)
+
+        ' Display a creation form
         Dim creation_form As New New_Array_Type_Form(
                "Array",
                "",
                Me.Get_Children_Name(),
                "Base Type",
-               "to do",
-               Nothing,
+               type_by_path_dict.Keys(0),
+               type_by_path_dict.Keys.ToList(),
                "2")
         Dim creation_form_result As DialogResult = creation_form.ShowDialog()
+
+        ' Treat creation form result
         If creation_form_result = DialogResult.OK Then
+
+            ' Get the type referenced by the array
+            Dim ref_type As Software_Element = Nothing
+            ref_type = type_by_path_dict(creation_form.Get_Ref_Rerenced_Element_Path())
+
+            ' Create the array type
             Dim new_array_type As New Array_Type(
-                creation_form.Get_Name(),
-                creation_form.Get_Description(),
-                Me,
-                Me.Node,
-                CUInt(creation_form.Get_Multiplicity()),
-                Guid.NewGuid)
+                    creation_form.Get_Name(),
+                    creation_form.Get_Description(),
+                    Me,
+                    Me.Node,
+                    CUInt(creation_form.Get_Multiplicity()),
+                    ref_type.UUID)
+
+            ' Add array type to its package
             Me.Types.Add(new_array_type)
             Me.Children.Add(new_array_type)
+
             Me.Display_Package_Modified()
         End If
+
+    End Sub
+
+
+    ' -------------------------------------------------------------------------------------------- '
+    ' Methods for model management
+    ' -------------------------------------------------------------------------------------------- '
+
+    Public Sub Complete_Type_List(ByRef type_list As List(Of Type))
+        type_list.AddRange(Me.Types)
+        For Each pkg In Me.Packages
+            pkg.Complete_Type_List(type_list)
+        Next
     End Sub
 
 End Class

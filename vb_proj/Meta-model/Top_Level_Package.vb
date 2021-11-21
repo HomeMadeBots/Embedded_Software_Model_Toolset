@@ -37,9 +37,10 @@ Public Class Top_Level_Package
     Public Sub New(
             name As String,
             description As String,
+            owner As Software_Element,
             parent_node As TreeNode,
             file_path As String)
-        MyBase.New(name, description, Nothing, parent_node)
+        MyBase.New(name, description, owner, parent_node)
         Me.Xml_File_Path = file_path
         Me.Status = E_PACKAGE_STATUS.WRITABLE
         Me.Save()
@@ -65,12 +66,16 @@ Public Class Top_Level_Package
         Return Top_Level_Package.Writable_Context_Menu
     End Function
 
+    Protected Overrides Function Get_Path_Separator() As String
+        Return ""
+    End Function
 
     ' -------------------------------------------------------------------------------------------- '
     ' Various method
     ' -------------------------------------------------------------------------------------------- '
 
     Public Shared Function Load(
+            parent_project As Software_Project,
             default_name As String, ' name to display if package not loaded
             file_path As String,
             parent_node As TreeNode,
@@ -88,6 +93,7 @@ Public Class Top_Level_Package
                 pkg = CType(Top_Level_Package.Pkg_Serializer.Deserialize(reader), Top_Level_Package)
                 With pkg
                     .Xml_File_Path = file_path
+                    .Owner = parent_project
                 End With
                 If is_writable = True Then
                     pkg.Status = E_PACKAGE_STATUS.WRITABLE
@@ -150,7 +156,9 @@ Public Class Top_Level_Package
 
     End Function
 
-    Public Shared Sub Load_Basic_Types(parent_node As TreeNode)
+    Public Shared Function Load_Basic_Types(
+            parent_project As Software_Project,
+            parent_node As TreeNode) As Top_Level_Package
         Dim pkg As Top_Level_Package = Nothing
         Dim exe_assembly As Assembly = Assembly.GetExecutingAssembly()
         Dim ressource_name As String = "Embedded_Software_Model_Toolset.Basic_Types.pkgx"
@@ -160,9 +168,11 @@ Public Class Top_Level_Package
         reader.Close()
         file_stream.Close()
         pkg.Status = E_PACKAGE_STATUS.LOCKED
+        pkg.Owner = parent_project
         pkg.Post_Treat_After_Deserialization(parent_node)
         pkg.Update_Display()
-    End Sub
+        Return pkg
+    End Function
 
     Private Sub Update_Display()
         Select Case Me.Status

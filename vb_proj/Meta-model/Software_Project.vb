@@ -56,8 +56,8 @@ Public Class Software_Project
     End Sub
 
     Protected Overrides Function Get_Children() As List(Of Software_Element)
-        If IsNothing(Me.Children) Then
-            Me.Children = New List(Of Software_Element)
+        If Me.Children_Is_Computed = False Then
+            Me.Children_Is_Computed = True
             Me.Children.AddRange(Me.Top_Level_Packages_List)
         End If
         Return Me.Children
@@ -122,6 +122,7 @@ Public Class Software_Project
                 pkg_ref.Set_Full_Path(new_pkg_path)
 
                 new_pkg = Top_Level_Package.Load(
+                    new_sw_proj,
                     pkg_ref.Last_Known_Name,
                     new_pkg_path,
                     new_sw_proj.Node,
@@ -139,7 +140,8 @@ Public Class Software_Project
     End Function
 
     Public Sub Add_Predefined_Package()
-        Top_Level_Package.Load_Basic_Types(Me.Node)
+        Dim types_pkg As Top_Level_Package = Top_Level_Package.Load_Basic_Types(Me, Me.Node)
+        Me.Top_Level_Packages_List.Add(types_pkg)
     End Sub
 
 
@@ -206,6 +208,7 @@ Public Class Software_Project
                 ' File is not already loaded
                 ' Load the package from the file given by user
                 Dim loaded_pkg As Top_Level_Package = Top_Level_Package.Load(
+                    Me,
                     "temp",
                     pkg_file_path,
                     Me.Node,
@@ -241,6 +244,7 @@ Public Class Software_Project
             created_pkg = New Top_Level_Package(
                 pkg_creation_form.Get_Name(),
                 pkg_creation_form.Get_Description(),
+                Me,
                 Me.Node,
                 pkg_file_path)
 
@@ -341,6 +345,19 @@ Public Class Software_Project
         Next
         Me.Display_Modified()
     End Sub
+
+
+    ' -------------------------------------------------------------------------------------------- '
+    ' Methods for model management
+    ' -------------------------------------------------------------------------------------------- '
+    Public Function Get_Type_List() As List(Of Type)
+        Dim type_list As New List(Of Type)
+        For Each pkg In Me.Top_Level_Packages_List
+            pkg.Complete_Type_List(type_list)
+        Next
+        Return type_list
+    End Function
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Private methods
