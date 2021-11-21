@@ -76,18 +76,28 @@ Public Class Package
         Return Package.Context_Menu
     End Function
 
+    Public Overrides Function Get_Metaclass_Name() As String
+        Return "Package"
+    End Function
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu
     ' -------------------------------------------------------------------------------------------- '
 
     Public Sub Add_Package()
-        Dim creation_form As New New_Element_Form("Package", "", Me.Get_Children_Name())
+        Dim creation_form As New Element_Form(
+            Element_Form.E_Form_Kind.CREATION_FORM,
+            "Package",
+            "",
+            "Package",
+            "",
+            Me.Get_Children_Name())
         Dim creation_form_result As DialogResult = creation_form.ShowDialog()
         If creation_form_result = DialogResult.OK Then
             Dim new_pkg As New Package(
-                creation_form.Get_Name(),
-                creation_form.Get_Description(),
+                creation_form.Get_Element_Name(),
+                creation_form.Get_Element_Description(),
                 Me,
                 Me.Node)
             Me.Packages.Add(new_pkg)
@@ -103,14 +113,17 @@ Public Class Package
         type_by_path_dict = Software_Element.Create_Path_Dictionary_From_List(type_list)
 
         ' Display a creation form
-        Dim creation_form As New New_Array_Type_Form(
-               "Array",
-               "",
-               Me.Get_Children_Name(),
-               "Base Type",
-               type_by_path_dict.Keys(0),
-               type_by_path_dict.Keys.ToList(),
-               "2")
+        Dim creation_form As New Array_Type_Form(
+            Element_Form.E_Form_Kind.CREATION_FORM,
+            Array_Type.Metaclass_Name,
+            "",
+            "Array",
+            "",
+            Me.Get_Children_Name(),
+            "Base Type",
+            type_by_path_dict.Keys(0),
+            type_by_path_dict.Keys.ToList(),
+            "2")
         Dim creation_form_result As DialogResult = creation_form.ShowDialog()
 
         ' Treat creation form result
@@ -122,8 +135,8 @@ Public Class Package
 
             ' Create the array type
             Dim new_array_type As New Array_Type(
-                    creation_form.Get_Name(),
-                    creation_form.Get_Description(),
+                    creation_form.Get_Element_Name(),
+                    creation_form.Get_Element_Description(),
                     Me,
                     Me.Node,
                     CUInt(creation_form.Get_Multiplicity()),

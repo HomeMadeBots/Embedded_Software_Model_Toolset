@@ -1,11 +1,14 @@
 ﻿Imports System.Globalization
 
-Public Class New_Array_Type_Form
-    Inherits New_Element_With_Ref_Form
+Public Class Array_Type_Form
+    Inherits Element_With_Ref_Form
 
     Private WithEvents Multiplicity_TexBox As TextBox
 
     Public Sub New(
+            form_kind As E_Form_Kind,
+            element_metaclass_name As String,
+            default_uuid As String,
             default_name As String,
             default_description As String,
             forbidden_name_list As List(Of String),
@@ -15,6 +18,9 @@ Public Class New_Array_Type_Form
             default_multiplicity As String)
 
         MyBase.New(
+            form_kind,
+            element_metaclass_name,
+            default_uuid,
             default_name,
             default_description,
             forbidden_name_list,
@@ -22,7 +28,7 @@ Public Class New_Array_Type_Form
             default_ref_element_path,
             ref_element_path_list)
 
-        ' Get the current y position of Create_Button
+        ' Get the current y position of Main_Button
         Dim item_y_pos As Integer = Me.ClientSize.Height - ESMT_Form.Marge - Button_Height
 
         Dim inner_item_y_pos As Integer = ESMT_Form.Marge
@@ -52,11 +58,13 @@ Public Class New_Array_Type_Form
         multiplicity_panel.Size = New Size(Panel_Width, inner_item_y_pos)
         item_y_pos += multiplicity_panel.Height + ESMT_Form.Marge
 
+        Me.Checks_List.Add(AddressOf Check_Multiplicity)
+
 
         '------------------------------------------------------------------------------------------'
-        ' (Re)design Create button
-        Me.Create_Button.Location = New Point((Form_Width - Button_Width) \ 2, item_y_pos)
-        item_y_pos += Me.Create_Button.Height + ESMT_Form.Marge
+        ' (Re)design Main_Button
+        Me.Main_Button.Location = New Point((Form_Width - Button_Width) \ 2, item_y_pos)
+        item_y_pos += Me.Main_Button.Height + ESMT_Form.Marge
 
 
         '------------------------------------------------------------------------------------------'
@@ -69,8 +77,7 @@ Public Class New_Array_Type_Form
         Return Me.Multiplicity_TexBox.Text
     End Function
 
-
-    Private Sub Check_Multiplicity() Handles Multiplicity_TexBox.TextChanged
+    Private Function Check_Multiplicity() As Boolean
         Dim is_multiplicity_valid As Boolean = False
         Dim multiplicity As UInteger = 0
         Dim is_multplicity_integer As Boolean
@@ -89,6 +96,12 @@ Public Class New_Array_Type_Form
                 "Multiplicity shall be a integer equal or lager than 1.",
                 MsgBoxStyle.Exclamation)
         End If
+        Return is_multiplicity_valid
+    End Function
+
+    Protected Overrides Sub Set_Fields_Read_Only()
+        MyBase.Set_Fields_Read_Only()
+        Me.Multiplicity_TexBox.ReadOnly = True
     End Sub
 
 End Class

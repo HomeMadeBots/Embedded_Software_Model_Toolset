@@ -91,26 +91,20 @@
     <Compile Include="Context_Menus\Top_Package_Unloaded_Context_Menu.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Forms\Edition_Form.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Application\ESMT_Main_Window.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ESMT_Form.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\New_Array_Type_Form.vb">
+    <Compile Include="Forms\Array_Type_Form.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\New_Element_Form.vb">
+    <Compile Include="Forms\Element_Form.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Application\main.vb" />
-    <Compile Include="Forms\New_Element_With_Ref_Form.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\View_Form.vb">
+    <Compile Include="Forms\Element_With_Ref_Form.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Meta-model\Type.vb" />

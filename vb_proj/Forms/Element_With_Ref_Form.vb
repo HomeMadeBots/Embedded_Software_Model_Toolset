@@ -1,9 +1,12 @@
-﻿Public Class New_Element_With_Ref_Form
-    Inherits New_Element_Form
+﻿Public Class Element_With_Ref_Form
+    Inherits Element_Form
 
     Protected WithEvents Referenced_Element_ComboBox As ComboBox
 
     Public Sub New(
+            form_kind As E_Form_Kind,
+            element_metaclass_name As String,
+            default_uuid As String,
             default_name As String,
             default_description As String,
             forbidden_name_list As List(Of String),
@@ -11,9 +14,15 @@
             default_ref_element_path As String,
             ref_element_path_list As List(Of String))
 
-        MyBase.New(default_name, default_description, forbidden_name_list)
+        MyBase.New(
+            form_kind,
+            element_metaclass_name,
+            default_uuid,
+            default_name,
+            default_description,
+            forbidden_name_list)
 
-        ' Get the current y position of Create_Button
+        ' Get the current y position of Main_Button
         Dim item_y_pos As Integer = Me.ClientSize.Height - ESMT_Form.Marge - Button_Height
 
         Dim inner_item_y_pos As Integer = ESMT_Form.Marge
@@ -54,9 +63,9 @@
 
 
         '------------------------------------------------------------------------------------------'
-        ' (Re)design Create button
-        Me.Create_Button.Location = New Point((Form_Width - Button_Width) \ 2, item_y_pos)
-        item_y_pos += Me.Create_Button.Height + ESMT_Form.Marge
+        ' (Re)design Main_Button
+        Me.Main_Button.Location = New Point((Form_Width - Button_Width) \ 2, item_y_pos)
+        item_y_pos += Me.Main_Button.Height + ESMT_Form.Marge
 
 
         '------------------------------------------------------------------------------------------'
@@ -69,5 +78,10 @@
     Public Function Get_Ref_Rerenced_Element_Path() As String
         Return Me.Referenced_Element_ComboBox.Text
     End Function
+
+    Protected Overrides Sub Set_Fields_Read_Only()
+        MyBase.Set_Fields_Read_Only()
+        Me.Referenced_Element_ComboBox.Enabled = False
+    End Sub
 
 End Class

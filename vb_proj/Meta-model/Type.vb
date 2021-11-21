@@ -74,16 +74,31 @@ End Class
 
 Public Class Basic_Integer_Type
     Inherits Basic_Type
+
+    Public Overrides Function Get_Metaclass_Name() As String
+        Return "Basic_Integer_Type"
+    End Function
+
 End Class
 
 
 Public Class Basic_Boolean_Type
     Inherits Basic_Type
+
+    Public Overrides Function Get_Metaclass_Name() As String
+        Return "Basic_Boolean_Type"
+    End Function
+
 End Class
 
 
 Public Class Basic_Floating_Point_Type
     Inherits Basic_Type
+
+    Public Overrides Function Get_Metaclass_Name() As String
+        Return "Basic_Floating_Point_Type"
+    End Function
+
 End Class
 
 
@@ -92,6 +107,8 @@ Public Class Array_Type
 
     Public Multiplicity As UInteger
     Public Base_Type_Ref As Guid
+
+    Public Shared ReadOnly Metaclass_Name As String = "Array_Type"
 
     ' -------------------------------------------------------------------------------------------- '
     ' Constructors
@@ -123,6 +140,34 @@ Public Class Array_Type
             .SelectedImageKey = "Array_Type",
             .ContextMenuStrip = Software_Element.Leaf_Context_Menu,
             .Tag = Me}
+    End Sub
+
+    Public Overrides Function Get_Metaclass_Name() As String
+        Return "Array_Type"
+    End Function
+
+
+    ' -------------------------------------------------------------------------------------------- '
+    ' Methods for contextual menu
+    ' -------------------------------------------------------------------------------------------- '
+
+    Public Overrides Sub Edit()
+
+    End Sub
+
+    Public Overrides Sub View()
+        Dim elmt_view_form As New Array_Type_Form(
+            Element_Form.E_Form_Kind.VIEW_FORM,
+            Me.Get_Metaclass_Name(),
+            Me.UUID.ToString,
+            Me.Name,
+            Me.Description,
+            Nothing,
+            "Base Type",
+            "TODO",
+            Nothing,
+            Me.Multiplicity.ToString())
+        elmt_view_form.ShowDialog()
     End Sub
 
 End Class

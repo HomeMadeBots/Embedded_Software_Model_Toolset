@@ -80,6 +80,10 @@ Public Class Software_Project
         Return Nothing
     End Function
 
+    Public Overrides Function Get_Metaclass_Name() As String
+        Return "Project"
+    End Function
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Loading method
@@ -151,13 +155,19 @@ Public Class Software_Project
 
     ' Need to be overloaded to manage "is modified" display
     Public Overloads Sub Edit()
-        Dim prj_edit_form As New Edition_Form(Me.Name, Me.UUID.ToString, Me.Description)
+        Dim prj_edit_form As New Element_Form(
+            Element_Form.E_Form_Kind.EDITION_FORM,
+            "Project",
+            Me.UUID.ToString,
+            Me.Name,
+            Me.Description,
+            Nothing)
         Dim edit_result As DialogResult
         edit_result = prj_edit_form.ShowDialog()
         If edit_result = DialogResult.OK Then
-            Me.Name = prj_edit_form.Get_Name()
+            Me.Name = prj_edit_form.Get_Element_Name()
             Me.Node.Text = Me.Name
-            Me.Description = prj_edit_form.Get_Description()
+            Me.Description = prj_edit_form.Get_Element_Description()
             Me.Display_Modified()
         End If
     End Sub

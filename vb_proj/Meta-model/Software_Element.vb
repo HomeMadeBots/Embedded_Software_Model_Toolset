@@ -190,19 +190,28 @@ Public MustInherit Class Software_Element
         Return Get_Project().Get_Type_List()
     End Function
 
+    Public MustOverride Function Get_Metaclass_Name() As String
+
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu
     ' -------------------------------------------------------------------------------------------- '
 
     Public Overridable Sub Edit()
-        Dim elmt_edit_form As New Edition_Form(Me.Name, Me.UUID.ToString, Me.Description)
+        Dim elmt_edit_form As New Element_Form(
+            Element_Form.E_Form_Kind.EDITION_FORM,
+            Me.Get_Metaclass_Name(),
+            Me.UUID.ToString(),
+            Me.Name,
+            Me.Description,
+            Nothing) ' Forbidden Name list
         Dim edit_result As DialogResult
         edit_result = elmt_edit_form.ShowDialog()
         If edit_result = DialogResult.OK Then
-            Me.Name = elmt_edit_form.Get_Name()
+            Me.Name = elmt_edit_form.Get_Element_Name()
             Me.Node.Text = Me.Name
-            Me.Description = elmt_edit_form.Get_Description()
+            Me.Description = elmt_edit_form.Get_Element_Description()
             Me.Display_Package_Modified()
         End If
     End Sub
@@ -221,7 +230,13 @@ Public MustInherit Class Software_Element
     End Sub
 
     Public Overridable Sub View()
-        Dim elmt_view_form As New View_Form(Me.Get_Path(), Me.UUID.ToString, Me.Description)
+        Dim elmt_view_form As New Element_Form(
+            Element_Form.E_Form_Kind.VIEW_FORM,
+            Me.Get_Metaclass_Name(),
+            Me.UUID.ToString(),
+            Me.Name,
+            Me.Description,
+            Nothing)
         elmt_view_form.ShowDialog()
     End Sub
 
