@@ -12,6 +12,10 @@ Public Class Package
      XmlArray("Types")>
     Public Types As New List(Of Type)
 
+    <XmlArrayItemAttribute(GetType(Static_Physical_Architecture_Diagram)),
+     XmlArray("Diagrams")>
+    Public Diagrams As New List(Of Diagram)
+
     Private Shared Context_Menu As New Package_Context_Menu()
 
     Public Shared ReadOnly Metaclass_Name As String = "Package"
@@ -41,6 +45,7 @@ Public Class Package
         If Me.Children_Is_Computed = False Then
             Me.Children_Is_Computed = True
             Me.Children.AddRange(Me.Packages)
+            Me.Children.AddRange(Me.Diagrams)
             Me.Children.AddRange(Me.Types)
         End If
         Return Me.Children
@@ -153,6 +158,26 @@ Public Class Package
 
     End Sub
 
+    Public Sub Add_Static_PSWA_Diagram()
+        Dim creation_form As New Element_Form(
+            Element_Form.E_Form_Kind.CREATION_FORM,
+            Static_Physical_Architecture_Diagram.Metaclass_Name,
+            "",
+            Static_Physical_Architecture_Diagram.Metaclass_Name,
+            "",
+            Me.Get_Children_Name())
+        Dim creation_form_result As DialogResult = creation_form.ShowDialog()
+        If creation_form_result = DialogResult.OK Then
+            Dim new_dgm As New Static_Physical_Architecture_Diagram(
+                creation_form.Get_Element_Name(),
+                creation_form.Get_Element_Description(),
+                Me,
+                Me.Node)
+            Me.Diagrams.Add(new_dgm)
+            Me.Children.Add(new_dgm)
+            Me.Display_Package_Modified()
+        End If
+    End Sub
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for model management

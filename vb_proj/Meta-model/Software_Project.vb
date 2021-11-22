@@ -21,6 +21,8 @@ Public Class Software_Project
 
     Public Shared ReadOnly Metaclass_Name As String = "Project"
 
+    Private Diagram_Area As TabControl = Nothing
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Constructors
@@ -34,13 +36,15 @@ Public Class Software_Project
             name As String,
             desc As String,
             file_path As String,
-            browser As TreeView)
+            browser As TreeView,
+            diagram_area As TabControl)
         Me.Name = name
         Me.Description = desc
         Me.UUID = Guid.NewGuid()
         Me.Create_Node()
         browser.Nodes.Add(Me.Node)
         Me.Xml_File_Path = file_path
+        Me.Diagram_Area = diagram_area
         Me.Packages_References_List = New List(Of Package_Reference)
     End Sub
 
@@ -93,7 +97,8 @@ Public Class Software_Project
 
     Public Shared Function Load(
             project_file_path As String,
-            browser As TreeView) As Software_Project
+            browser As TreeView,
+            diagram_area As TabControl) As Software_Project
 
         Dim new_sw_proj As Software_Project = Nothing
 
@@ -116,6 +121,7 @@ Public Class Software_Project
 
             ' Set or initialize private attributes
             new_sw_proj.Xml_File_Path = project_file_path
+            new_sw_proj.Diagram_Area = diagram_area
 
             ' Load the top level Packages aggregated by the project
             Environment.CurrentDirectory = Path.GetDirectoryName(project_file_path)
@@ -409,6 +415,22 @@ Public Class Software_Project
         Next
         Return type_list
     End Function
+
+
+    ' Pas top, à déplacer/déléguer à main_window ?
+    Public Sub Add_Diagram_View(diagram_page As TabPage)
+        If Not Me.Diagram_Area.Controls.Contains(diagram_page) Then
+            Me.Diagram_Area.Controls.Add(diagram_page)
+            diagram_page.ContextMenuStrip = New Diagram_Page_Context_Menu()
+        End If
+        Me.Diagram_Area.SelectTab(diagram_page)
+    End Sub
+
+    Public Sub Hide_Diagram_View(diagram_page As TabPage)
+        If Me.Diagram_Area.Controls.Contains(diagram_page) Then
+            Me.Diagram_Area.Controls.Remove(diagram_page)
+        End If
+    End Sub
 
 
     ' -------------------------------------------------------------------------------------------- '

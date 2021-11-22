@@ -4,8 +4,7 @@
 
     Protected WithEvents Menu_Remove_Top As New ToolStripMenuItem("Remove from project")
     Protected WithEvents Menu_Display_Path As New ToolStripMenuItem("Display file path")
-    Protected WithEvents Menu_Add_Package As New ToolStripMenuItem("Add Package")
-    Protected WithEvents Menu_Add_Array_Type As New ToolStripMenuItem("Add Array_Type")
+
 
     Private Sub Remove(
             ByVal sender As Object,
@@ -19,20 +18,6 @@
             ByVal e As EventArgs) Handles Menu_Display_Path.Click
         Dim pkg_name As String = Get_Top_Package(sender).Name
         Get_Project(sender).Display_Package_File_Path(pkg_name)
-    End Sub
-
-    Private Sub Add_Package(
-            ByVal sender As Object,
-            ByVal e As EventArgs) Handles Menu_Add_Package.Click
-        Dim pkg As Package = CType(Element_Context_Menu.Get_Selected_Element(sender), Package)
-        pkg.Add_Package()
-    End Sub
-
-    Private Sub Add_Array_Type(
-        ByVal sender As Object,
-        ByVal e As EventArgs) Handles Menu_Add_Array_Type.Click
-        Dim pkg As Package = CType(Element_Context_Menu.Get_Selected_Element(sender), Package)
-        pkg.Add_Array_Type()
     End Sub
 
     Protected Shared Function Get_Top_Package(sender As Object) As Top_Level_Package

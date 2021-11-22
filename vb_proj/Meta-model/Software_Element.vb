@@ -84,8 +84,13 @@ Public MustInherit Class Software_Element
 
     Protected MustOverride Sub Create_Node()
 
+    Protected Overridable Sub Manage_Diagrams()
+        ' nothing to do for non diagram elements
+    End Sub
+
     Protected Sub Post_Treat_After_Deserialization(parent_node As TreeNode)
         Me.Create_Node()
+        Me.Manage_Diagrams()
         parent_node.Nodes.Add(Me.Node)
         If Not Me.Get_Top_Package().Is_Writable() Then
             Me.Node.ContextMenuStrip = Software_Element.Read_Only_Context_Menu
@@ -189,7 +194,7 @@ Public MustInherit Class Software_Element
         Return "::"
     End Function
 
-    Private Function Get_Project() As Software_Project
+    Protected Function Get_Project() As Software_Project
         Dim current_element As Software_Element = Me
         While Not IsNothing(current_element.Owner)
             current_element = current_element.Owner

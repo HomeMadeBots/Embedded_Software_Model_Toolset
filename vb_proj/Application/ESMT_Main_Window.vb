@@ -67,6 +67,7 @@
             .Add("Package", My.Resources.Package)
             .Add("Basic_Type", My.Resources.Basic_Type)
             .Add("Array_Type", My.Resources.Array_Type)
+            .Add("Diagram", My.Resources.Diagram)
         End With
 
 
@@ -85,6 +86,10 @@
 
     Public Function Get_Browser() As TreeView
         Return Me.Model_Browser
+    End Function
+
+    Public Function Get_Diagram_Area() As TabControl
+        Return Me.Diagram_Area
     End Function
 
     Public Sub Clear()
