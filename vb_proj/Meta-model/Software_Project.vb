@@ -147,7 +147,7 @@ Public Class Software_Project
 
     Public Sub Add_Predefined_Package()
         Dim types_pkg As Top_Level_Package = Top_Level_Package.Load_Basic_Types(Me, Me.Node)
-        Me.Top_Level_Packages_List.Add(types_pkg)
+        Me.Top_Level_Packages_List.Insert(0, types_pkg)
     End Sub
 
 

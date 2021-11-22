@@ -171,6 +171,8 @@ Public Class Top_Level_Package
         pkg.Owner = parent_project
         pkg.Post_Treat_After_Deserialization(parent_node)
         pkg.Update_Display()
+        parent_node.Nodes.Remove(pkg.Node)
+        parent_node.Nodes.Insert(0, pkg.Node)
         Return pkg
     End Function
 
