@@ -11,7 +11,7 @@
     Protected Kind As E_Form_Kind
 
     Private UUID_TextBox As TextBox
-    Private WithEvents Name_TextBox As TextBox
+    Protected WithEvents Name_TextBox As TextBox
     Private Description_TextBox As RichTextBox
     Protected WithEvents Main_Button As Button
 
@@ -37,30 +37,32 @@
 
         '------------------------------------------------------------------------------------------'
         ' Add element UUID panel
-        inner_item_y_pos = ESMT_Form.Marge
+        If Me.Kind <> E_Form_Kind.CREATION_FORM Then
+            inner_item_y_pos = ESMT_Form.Marge
 
-        Dim uuid_panel As New Panel With {
-            .Location = New Point(ESMT_Form.Marge, item_y_pos),
-            .BorderStyle = BorderStyle.FixedSingle}
-        Me.Controls.Add(uuid_panel)
+            Dim uuid_panel As New Panel With {
+                .Location = New Point(ESMT_Form.Marge, item_y_pos),
+                .BorderStyle = BorderStyle.FixedSingle}
+            Me.Controls.Add(uuid_panel)
 
-        Dim uuid_label As New Label With {
-            .Text = "UUID",
-            .Location = New Point(ESMT_Form.Marge, inner_item_y_pos),
-            .Size = ESMT_Form.Label_Size}
-        uuid_panel.Controls.Add(uuid_label)
-        inner_item_y_pos += uuid_label.Height
+            Dim uuid_label As New Label With {
+                .Text = "UUID",
+                .Location = New Point(ESMT_Form.Marge, inner_item_y_pos),
+                .Size = ESMT_Form.Label_Size}
+            uuid_panel.Controls.Add(uuid_label)
+            inner_item_y_pos += uuid_label.Height
 
-        Me.UUID_TextBox = New TextBox With {
-            .Text = default_uuid,
-            .ReadOnly = True,
-            .Location = New Point(ESMT_Form.Marge, inner_item_y_pos),
-            .Size = ESMT_Form.Label_Size}
-        uuid_panel.Controls.Add(Me.UUID_TextBox)
-        inner_item_y_pos += Me.UUID_TextBox.Height + ESMT_Form.Marge
+            Me.UUID_TextBox = New TextBox With {
+                .Text = default_uuid,
+                .ReadOnly = True,
+                .Location = New Point(ESMT_Form.Marge, inner_item_y_pos),
+                .Size = ESMT_Form.Label_Size}
+            uuid_panel.Controls.Add(Me.UUID_TextBox)
+            inner_item_y_pos += Me.UUID_TextBox.Height + ESMT_Form.Marge
 
-        uuid_panel.Size = New Size(Panel_Width, inner_item_y_pos)
-        item_y_pos += uuid_panel.Height + ESMT_Form.Marge
+            uuid_panel.Size = New Size(Panel_Width, inner_item_y_pos)
+            item_y_pos += uuid_panel.Height + ESMT_Form.Marge
+        End If
 
 
         '------------------------------------------------------------------------------------------'
@@ -143,18 +145,19 @@
         Select Case Me.Kind
             Case E_Form_Kind.CREATION_FORM
                 Me.Text = "Create"
+                Me.Name_TextBox.Select()
             Case E_Form_Kind.EDITION_FORM
                 Me.Text = "Edit"
+                Me.Name_TextBox.Select()
             Case E_Form_Kind.VIEW_FORM
                 Me.Text = "View"
+                Me.Main_Button.Select()
         End Select
         Me.Text &= " " & element_metaclass_name
         Me.ClientSize = New Size(Form_Width, item_y_pos)
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.FormBorderStyle = FormBorderStyle.FixedDialog
-
-        Me.Name_TextBox.Select()
 
     End Sub
 
@@ -215,8 +218,9 @@
         Return name_is_valid
     End Function
 
-    Private Sub Form_Created() Handles Me.Activated
+    Private Sub Form_Created() Handles Me.Load
         If Me.Kind = E_Form_Kind.VIEW_FORM Then
+            Me.Description_TextBox.BackColor = Color.FromArgb(255, 240, 240, 240)
             Me.Set_Fields_Read_Only()
         End If
     End Sub

@@ -124,7 +124,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Application\ESMT_Application.vb" />
-    <Compile Include="Forms\New_Recordable_Element_Form.vb">
+    <Compile Include="Forms\Recordable_Element_Form.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Context_Menus\Package_Context_Menu.vb">

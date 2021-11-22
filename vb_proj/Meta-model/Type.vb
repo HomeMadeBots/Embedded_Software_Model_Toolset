@@ -75,8 +75,10 @@ End Class
 Public Class Basic_Integer_Type
     Inherits Basic_Type
 
+    Public Shared ReadOnly Metaclass_Name As String = "Basic_Integer_Type"
+
     Public Overrides Function Get_Metaclass_Name() As String
-        Return "Basic_Integer_Type"
+        Return Basic_Integer_Type.Metaclass_Name
     End Function
 
 End Class
@@ -85,8 +87,10 @@ End Class
 Public Class Basic_Boolean_Type
     Inherits Basic_Type
 
+    Public Shared ReadOnly Metaclass_Name As String = "Basic_Boolean_Type"
+
     Public Overrides Function Get_Metaclass_Name() As String
-        Return "Basic_Boolean_Type"
+        Return Basic_Boolean_Type.Metaclass_Name
     End Function
 
 End Class
@@ -95,8 +99,10 @@ End Class
 Public Class Basic_Floating_Point_Type
     Inherits Basic_Type
 
+    Public Shared ReadOnly Metaclass_Name As String = "Basic_Floating_Point_Type"
+
     Public Overrides Function Get_Metaclass_Name() As String
-        Return "Basic_Floating_Point_Type"
+        Return Basic_Floating_Point_Type.Metaclass_Name
     End Function
 
 End Class
@@ -109,6 +115,8 @@ Public Class Array_Type
     Public Base_Type_Ref As Guid
 
     Public Shared ReadOnly Metaclass_Name As String = "Array_Type"
+
+    Public Shared ReadOnly Multiplicity_Minimum_Value As UInteger = 2
 
     ' -------------------------------------------------------------------------------------------- '
     ' Constructors
@@ -143,7 +151,7 @@ Public Class Array_Type
     End Sub
 
     Public Overrides Function Get_Metaclass_Name() As String
-        Return "Array_Type"
+        Return Array_Type.Metaclass_Name
     End Function
 
 
@@ -153,21 +161,81 @@ Public Class Array_Type
 
     Public Overrides Sub Edit()
 
-    End Sub
+        ' Build the list of possible referenced type
+        Dim type_list As List(Of Type) = Me.Get_Type_List_From_Project()
+        type_list.Remove(Me)
+        Dim type_by_path_dict As Dictionary(Of String, Software_Element)
+        type_by_path_dict = Software_Element.Create_Path_Dictionary_From_List(type_list)
+        Dim type_by_uuid_dict As Dictionary(Of Guid, Software_Element)
+        type_by_uuid_dict = Software_Element.Create_UUID_Dictionary_From_List(type_list)
 
-    Public Overrides Sub View()
-        Dim elmt_view_form As New Array_Type_Form(
-            Element_Form.E_Form_Kind.VIEW_FORM,
-            Me.Get_Metaclass_Name(),
+        Dim current_referenced_type_path As String = "unresolved"
+        If type_by_uuid_dict.ContainsKey(Me.Base_Type_Ref) Then
+            current_referenced_type_path = type_by_uuid_dict(Me.Base_Type_Ref).Get_Path()
+        End If
+
+        Dim forbidden_name_list As List(Of String)
+        forbidden_name_list = Me.Owner.Get_Children_Name()
+        forbidden_name_list.Remove(Me.Name)
+
+        Dim edition_form As New Array_Type_Form(
+            Element_Form.E_Form_Kind.EDITION_FORM,
+            Array_Type.Metaclass_Name,
             Me.UUID.ToString,
             Me.Name,
             Me.Description,
-            Nothing,
+            forbidden_name_list,
             "Base Type",
-            "TODO",
-            Nothing,
+            current_referenced_type_path,
+            type_by_path_dict.Keys.ToList(),
+            Me.Multiplicity.ToString())
+        Dim edition_form_result As DialogResult = edition_form.ShowDialog()
+
+        ' Treat edition form result
+        If edition_form_result = DialogResult.OK Then
+
+            ' Get the type referenced by the array
+            Dim new_referenced_type As Software_Element = Nothing
+            new_referenced_type = type_by_path_dict(edition_form.Get_Ref_Rerenced_Element_Path())
+
+            ' Update the array type
+            Me.Name = edition_form.Get_Element_Name()
+            Me.Node.Text = Me.Name
+            Me.Description = edition_form.Get_Element_Description()
+            Me.Multiplicity = CUInt(edition_form.Get_Multiplicity())
+            Me.Base_Type_Ref = new_referenced_type.UUID
+
+            Me.Display_Package_Modified()
+        End If
+
+    End Sub
+
+    Public Overrides Sub View()
+
+        ' Build the list of possible referenced type
+        Dim type_list As List(Of Type) = Me.Get_Type_List_From_Project()
+        Dim type_by_uuid_dict As Dictionary(Of Guid, Software_Element)
+        type_by_uuid_dict = Software_Element.Create_UUID_Dictionary_From_List(type_list)
+
+        ' Get referenced type path
+        Dim referenced_type_path As String = "unresolved"
+        If type_by_uuid_dict.ContainsKey(Me.Base_Type_Ref) Then
+            referenced_type_path = type_by_uuid_dict(Me.Base_Type_Ref).Get_Path()
+        End If
+
+        Dim elmt_view_form As New Array_Type_Form(
+            Element_Form.E_Form_Kind.VIEW_FORM,
+            Array_Type.Metaclass_Name,
+            Me.UUID.ToString,
+            Me.Name,
+            Me.Description,
+            Nothing, ' Forbidden name list, useless for View
+            "Base Type",
+            referenced_type_path,
+            Nothing, ' Useless for View
             Me.Multiplicity.ToString())
         elmt_view_form.ShowDialog()
+
     End Sub
 
 End Class

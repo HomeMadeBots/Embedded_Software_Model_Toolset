@@ -19,6 +19,8 @@ Public Class Software_Project
 
     Private Shared Project_Serializer As New XmlSerializer(GetType(Software_Project))
 
+    Public Shared ReadOnly Metaclass_Name As String = "Project"
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Constructors
@@ -153,15 +155,24 @@ Public Class Software_Project
     ' Methods for contextual menu
     ' -------------------------------------------------------------------------------------------- '
 
-    ' Need to be overloaded to manage "is modified" display
-    Public Overloads Sub Edit()
-        Dim prj_edit_form As New Element_Form(
+    Public Overrides Sub Edit()
+
+        Dim my_directory As String
+        Dim my_file_name As String
+        my_directory = Path.GetDirectoryName(Me.Xml_File_Path)
+        my_file_name = Path.GetFileNameWithoutExtension(Me.Xml_File_Path)
+
+        Dim prj_edit_form As New Recordable_Element_Form(
             Element_Form.E_Form_Kind.EDITION_FORM,
-            "Project",
+            Software_Project.Metaclass_Name,
             Me.UUID.ToString,
             Me.Name,
             Me.Description,
-            Nothing)
+            Nothing,
+            my_directory,
+            my_file_name,
+            Software_Project.Project_File_Extension)
+
         Dim edit_result As DialogResult
         edit_result = prj_edit_form.ShowDialog()
         If edit_result = DialogResult.OK Then
@@ -170,6 +181,29 @@ Public Class Software_Project
             Me.Description = prj_edit_form.Get_Element_Description()
             Me.Display_Modified()
         End If
+
+    End Sub
+
+    Public Overrides Sub View()
+
+        Dim my_directory As String
+        Dim my_file_name As String
+        my_directory = Path.GetDirectoryName(Me.Xml_File_Path)
+        my_file_name = Path.GetFileNameWithoutExtension(Me.Xml_File_Path)
+
+        Dim view_form As New Recordable_Element_Form(
+            Element_Form.E_Form_Kind.VIEW_FORM,
+            Software_Project.Metaclass_Name,
+            Me.UUID.ToString,
+            Me.Name,
+            Me.Description,
+            Nothing,
+            my_directory,
+            my_file_name,
+            Software_Project.Project_File_Extension)
+
+        view_form.ShowDialog()
+
     End Sub
 
     Public Sub Save()
@@ -236,13 +270,19 @@ Public Class Software_Project
 
         Dim proposed_directory As String = Path.GetDirectoryName(Me.Xml_File_Path)
 
-        Dim pkg_creation_form As New New_Recordable_Element_Form(
-            "New_Package",
+        Dim forbidden_name_list As List(Of String)
+        forbidden_name_list = Me.Get_Children_Name()
+
+        Dim pkg_creation_form As New Recordable_Element_Form(
+            Element_Form.E_Form_Kind.CREATION_FORM,
+            Package.Metaclass_Name,
+            "",
+            Package.Metaclass_Name,
             "A good description is always useful.",
+            forbidden_name_list,
             proposed_directory,
-            "New_Package",
-            Top_Level_Package.Package_File_Extension,
-            New_Recordable_Element_Form.Recordable_Element_Kind.PACKAGE)
+            Package.Metaclass_Name,
+            Top_Level_Package.Package_File_Extension)
 
         Dim creation_result As DialogResult = pkg_creation_form.ShowDialog()
         If creation_result = DialogResult.OK Then
@@ -252,19 +292,21 @@ Public Class Software_Project
             ' Create the new package
             Dim created_pkg As Top_Level_Package = Nothing
             created_pkg = New Top_Level_Package(
-                pkg_creation_form.Get_Name(),
-                pkg_creation_form.Get_Description(),
+                pkg_creation_form.Get_Element_Name(),
+                pkg_creation_form.Get_Element_Description(),
                 Me,
                 Me.Node,
                 pkg_file_path)
 
+            ' Add package to project
             Me.Record_Package(created_pkg.Name, pkg_file_path, True)
             Me.Top_Level_Packages_List.Add(created_pkg)
-            'created_pkg.Display_In_Browser(Me)
+            Me.Children.Add(created_pkg)
 
             Me.Display_Modified()
 
         End If
+
     End Sub
 
     Public Sub Remove_Package(pkg_name As String)

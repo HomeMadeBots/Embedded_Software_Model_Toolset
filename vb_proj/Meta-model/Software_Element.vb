@@ -64,6 +64,15 @@ Public MustInherit Class Software_Element
         Return dico
     End Function
 
+    Public Shared Function Create_UUID_Dictionary_From_List(
+            elmt_list As IEnumerable(Of Software_Element)) As Dictionary(Of Guid, Software_Element)
+        Dim dico As New Dictionary(Of Guid, Software_Element)
+        For Each elmt In elmt_list
+            dico.Add(elmt.UUID, elmt)
+        Next
+        Return dico
+    End Function
+
 
     ' -------------------------------------------------------------------------------------------- '
     ' Generic methods
@@ -111,7 +120,7 @@ Public MustInherit Class Software_Element
         owner_pkg.Display_Modified()
     End Sub
 
-    Protected Function Get_Children_Name() As List(Of String)
+    Public Function Get_Children_Name() As List(Of String)
         Dim children_name As New List(Of String)
         For Each child In Me.Get_Children
             children_name.Add(child.Name)
@@ -164,7 +173,7 @@ Public MustInherit Class Software_Element
 
     Protected MustOverride Sub Remove_Me()
 
-    Protected Function Get_Path() As String
+    Public Function Get_Path() As String
         Dim my_path As String = Me.Get_Path_Separator() & Me.Name
         Dim parent As Software_Element = Me.Owner
         While Not IsNothing(parent.Owner)
@@ -199,21 +208,28 @@ Public MustInherit Class Software_Element
     ' -------------------------------------------------------------------------------------------- '
 
     Public Overridable Sub Edit()
-        Dim elmt_edit_form As New Element_Form(
+
+        Dim forbidden_name_list As List(Of String)
+        forbidden_name_list = Me.Owner.Get_Children_Name()
+        forbidden_name_list.Remove(Me.Name)
+
+        Dim edit_form As New Element_Form(
             Element_Form.E_Form_Kind.EDITION_FORM,
             Me.Get_Metaclass_Name(),
             Me.UUID.ToString(),
             Me.Name,
             Me.Description,
-            Nothing) ' Forbidden Name list
+            forbidden_name_list)
+
         Dim edit_result As DialogResult
-        edit_result = elmt_edit_form.ShowDialog()
+        edit_result = edit_form.ShowDialog()
         If edit_result = DialogResult.OK Then
-            Me.Name = elmt_edit_form.Get_Element_Name()
+            Me.Name = edit_form.Get_Element_Name()
             Me.Node.Text = Me.Name
-            Me.Description = elmt_edit_form.Get_Element_Description()
+            Me.Description = edit_form.Get_Element_Description()
             Me.Display_Package_Modified()
         End If
+
     End Sub
 
     Public Sub Remove()
@@ -230,14 +246,14 @@ Public MustInherit Class Software_Element
     End Sub
 
     Public Overridable Sub View()
-        Dim elmt_view_form As New Element_Form(
+        Dim view_form As New Element_Form(
             Element_Form.E_Form_Kind.VIEW_FORM,
             Me.Get_Metaclass_Name(),
             Me.UUID.ToString(),
             Me.Name,
             Me.Description,
-            Nothing)
-        elmt_view_form.ShowDialog()
+            Nothing) ' forbidden name list
+        view_form.ShowDialog()
     End Sub
 
 End Class

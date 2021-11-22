@@ -14,6 +14,8 @@ Public Class Package
 
     Private Shared Context_Menu As New Package_Context_Menu()
 
+    Public Shared ReadOnly Metaclass_Name As String = "Package"
+
     ' -------------------------------------------------------------------------------------------- '
     ' Constructors
     ' -------------------------------------------------------------------------------------------- '
@@ -77,7 +79,7 @@ Public Class Package
     End Function
 
     Public Overrides Function Get_Metaclass_Name() As String
-        Return "Package"
+        Return Package.Metaclass_Name
     End Function
 
 
@@ -88,9 +90,9 @@ Public Class Package
     Public Sub Add_Package()
         Dim creation_form As New Element_Form(
             Element_Form.E_Form_Kind.CREATION_FORM,
-            "Package",
+            Package.Metaclass_Name,
             "",
-            "Package",
+            Package.Metaclass_Name,
             "",
             Me.Get_Children_Name())
         Dim creation_form_result As DialogResult = creation_form.ShowDialog()
@@ -117,13 +119,13 @@ Public Class Package
             Element_Form.E_Form_Kind.CREATION_FORM,
             Array_Type.Metaclass_Name,
             "",
-            "Array",
+            Array_Type.Metaclass_Name,
             "",
             Me.Get_Children_Name(),
             "Base Type",
             type_by_path_dict.Keys(0),
             type_by_path_dict.Keys.ToList(),
-            "2")
+            Array_Type.Multiplicity_Minimum_Value.ToString())
         Dim creation_form_result As DialogResult = creation_form.ShowDialog()
 
         ' Treat creation form result

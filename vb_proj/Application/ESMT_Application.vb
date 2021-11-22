@@ -56,13 +56,16 @@ Public Class ESMT_Application
     Public Sub Create_Project()
 
         ' Open a form asking data for the creation of a project
-        Dim prj_creation_form As New New_Recordable_Element_Form(
-            "New_Project",
-            Software_Element.Get_Default_Description(),
+        Dim prj_creation_form As New Recordable_Element_Form(
+            Element_Form.E_Form_Kind.CREATION_FORM,
+            Software_Project.Metaclass_Name,
             "",
-            "New_Project",
-            Software_Project.Project_File_Extension,
-            New_Recordable_Element_Form.Recordable_Element_Kind.PROJECT)
+            Software_Project.Metaclass_Name,
+            "A good description is always useful.",
+            Nothing, ' no forbidden name because no brother
+            "",
+            Software_Project.Metaclass_Name,
+            Software_Project.Project_File_Extension)
 
         Dim creation_result As DialogResult = prj_creation_form.ShowDialog()
 
@@ -74,8 +77,8 @@ Public Class ESMT_Application
 
             ' Create a new project using data from the form
             Me.Loaded_Project = New Software_Project(
-                prj_creation_form.Get_Name(),
-                prj_creation_form.Get_Description(),
+                prj_creation_form.Get_Element_Name(),
+                prj_creation_form.Get_Element_Description(),
                 prj_creation_form.Get_File_Full_Path(),
                 Me.Main_Window.Get_Browser())
 

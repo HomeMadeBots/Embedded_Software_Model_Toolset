@@ -61,6 +61,8 @@
         ref_panel.Size = New Size(Panel_Width, inner_item_y_pos)
         item_y_pos += ref_panel.Height + ESMT_Form.Marge
 
+        Me.Checks_List.Add(AddressOf Check_Ref_Rerenced_Element_Path)
+
 
         '------------------------------------------------------------------------------------------'
         ' (Re)design Main_Button
@@ -83,5 +85,15 @@
         MyBase.Set_Fields_Read_Only()
         Me.Referenced_Element_ComboBox.Enabled = False
     End Sub
+
+    Private Function Check_Ref_Rerenced_Element_Path() As Boolean
+        Dim ref_is_valid As Boolean = True
+        Dim used_combobox As ComboBox = Me.Referenced_Element_ComboBox
+        If Not used_combobox.Items.Contains(used_combobox.Text) Then
+            MsgBox("Invalid referenced element", MsgBoxStyle.Exclamation)
+            ref_is_valid = False
+        End If
+        Return ref_is_valid
+    End Function
 
 End Class

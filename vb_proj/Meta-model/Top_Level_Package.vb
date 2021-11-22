@@ -250,12 +250,66 @@ Public Class Top_Level_Package
     ' -------------------------------------------------------------------------------------------- '
 
     Public Overrides Sub Edit()
+
+        Dim my_directory As String
+        Dim my_file_name As String
+        my_directory = Path.GetDirectoryName(Me.Xml_File_Path)
+        my_file_name = Path.GetFileNameWithoutExtension(Me.Xml_File_Path)
+
         Dim previous_name As String = Me.Name
-        MyBase.Edit()
-        If previous_name <> Me.Name Then
-            Me.Get_Project().Update_Pkg_Known_Name(previous_name, Me.Name)
+
+        Dim forbidden_name_list As List(Of String)
+        forbidden_name_list = Me.Owner.Get_Children_Name()
+        forbidden_name_list.Remove(Me.Name)
+
+        Dim edit_form As New Recordable_Element_Form(
+            Element_Form.E_Form_Kind.EDITION_FORM,
+            Package.Metaclass_Name,
+            Me.UUID.ToString,
+            Me.Name,
+            Me.Description,
+            forbidden_name_list,
+            my_directory,
+            my_file_name,
+            Top_Level_Package.Package_File_Extension)
+
+        Dim edit_result As DialogResult
+        edit_result = edit_form.ShowDialog()
+        If edit_result = DialogResult.OK Then
+            Me.Name = edit_form.Get_Element_Name()
+            Me.Node.Text = Me.Name
+            If previous_name <> Me.Name Then
+                Me.Get_Project().Update_Pkg_Known_Name(previous_name, Me.Name)
+            End If
+            Me.Description = edit_form.Get_Element_Description()
+            Me.Display_Package_Modified()
         End If
+
     End Sub
+
+    Public Overrides Sub View()
+
+        Dim my_directory As String
+        Dim my_file_name As String
+        my_directory = Path.GetDirectoryName(Me.Xml_File_Path)
+        my_file_name = Path.GetFileNameWithoutExtension(Me.Xml_File_Path)
+
+        Dim view_form As New Recordable_Element_Form(
+            Element_Form.E_Form_Kind.VIEW_FORM,
+            Package.Metaclass_Name,
+            Me.UUID.ToString,
+            Me.Name,
+            Me.Description,
+            Nothing,
+            my_directory,
+            my_file_name,
+            Top_Level_Package.Package_File_Extension)
+
+        view_form.ShowDialog()
+
+    End Sub
+
+
 
     Public Sub Save()
         ' Initialize XML writer
