@@ -171,13 +171,23 @@
 
             ' Check that the targeted element is not in a read only package
             Dim targeted_element As Software_Element = CType(targeted_node.Tag, Software_Element)
-            If Not targeted_element.Get_Top_Package().Is_Writable() Then
+            Dim top_pkg As Top_Level_Package = targeted_element.Get_Top_Package()
+            If Not IsNothing(top_pkg) Then ' Possible if targeted_element is project
+                If Not top_pkg.Is_Writable() Then
+                    e.Effect = DragDropEffects.None
+                    Exit Sub
+                End If
+            End If
+
+            ' Check that the targeted element is a possible parent from meta-model point of view
+            If Not dragged_element.Is_Allowed_Parent(targeted_element) Then
                 e.Effect = DragDropEffects.None
                 Exit Sub
             End If
 
-            ' Check that the targeted element is a possible parent form meta-model point of view
-            If Not dragged_element.Is_Allowed_Parent(targeted_element) Then
+            ' Check that the targeted element does not already aggregate an element named as the
+            ' dragged element
+            If targeted_element.Get_Children_Name().Contains(dragged_element.Name) Then
                 e.Effect = DragDropEffects.None
                 Exit Sub
             End If

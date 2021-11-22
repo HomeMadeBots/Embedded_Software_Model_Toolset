@@ -100,17 +100,19 @@ Public MustInherit Class Software_Element
     End Sub
 
     Public Function Get_Top_Package() As Top_Level_Package
-        Dim top_pkg As Top_Level_Package
+        Dim top_pkg As Top_Level_Package = Nothing
         Dim current_elmt As Software_Element = Me
         Dim parent As Software_Element = current_elmt.Owner
-        If IsNothing(parent.Owner) Then
-            top_pkg = CType(current_elmt, Top_Level_Package)
-        Else
-            While Not IsNothing(parent.Owner)
-                current_elmt = parent
-                parent = current_elmt.Owner
-            End While
-            top_pkg = CType(current_elmt, Top_Level_Package)
+        If Not IsNothing(parent) Then ' parent = Nothing when Me is Software_Project
+            If IsNothing(parent.Owner) Then
+                top_pkg = CType(current_elmt, Top_Level_Package)
+            Else
+                While Not IsNothing(parent.Owner)
+                    current_elmt = parent
+                    parent = current_elmt.Owner
+                End While
+                top_pkg = CType(current_elmt, Top_Level_Package)
+            End If
         End If
         Return top_pkg
     End Function
