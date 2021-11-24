@@ -2,6 +2,7 @@
     Inherits Software_Element
 
     Private Page As TabPage
+    Protected Picture As PictureBox
 
     Protected Shared Context_Menu As New Diagram_Context_Menu
 
@@ -18,21 +19,24 @@
             owner As Software_Element,
             parent_node As TreeNode)
         MyBase.New(name, description, owner, parent_node)
-        Me.Page = New TabPage With {
-            .Text = Me.Name,
-            .ToolTipText = Me.Description,
-            .Tag = Me}
+        Me.Create_Page_And_Picture()
     End Sub
 
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods from Software_Element
     ' -------------------------------------------------------------------------------------------- '
-    Protected Overrides Sub Manage_Diagrams()
-        Me.Page = New TabPage With {
-            .Text = Me.Name,
-            .ToolTipText = Me.Description,
+
+    Protected Overrides Sub Create_Node()
+        Me.Node = New TreeNode(Me.Name) With {
+            .ImageKey = "Diagram",
+            .SelectedImageKey = "Diagram",
+            .ContextMenuStrip = Diagram.Context_Menu,
             .Tag = Me}
+    End Sub
+
+    Protected Overrides Sub Manage_Diagrams()
+        Me.Create_Page_And_Picture()
     End Sub
 
     Protected Overrides Sub Move_Me(new_parent As Software_Element)
@@ -57,21 +61,37 @@
 
 
     ' -------------------------------------------------------------------------------------------- '
-    ' 
-    ' -------------------------------------------------------------------------------------------- '
-
-
-
-    ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu
     ' -------------------------------------------------------------------------------------------- '
 
-    Public Sub Draw()
+    Public Sub Show()
         Me.Get_Project().Add_Diagram_View(Me.Page)
     End Sub
 
     Public Sub Hide()
         Me.Get_Project().Hide_Diagram_View(Me.Page)
+    End Sub
+
+
+    ' -------------------------------------------------------------------------------------------- '
+    ' 
+    ' -------------------------------------------------------------------------------------------- '
+
+    Public Overridable Sub Draw(ByVal g As Graphics)
+
+    End Sub
+
+    Private Sub Create_Page_And_Picture()
+        Me.Page = New TabPage With {
+            .Text = Me.Name,
+            .ToolTipText = Me.Description,
+            .Tag = Me}
+        Me.Picture = New PictureBox With {
+            .Dock = DockStyle.Fill,
+            .Anchor = AnchorStyles.Top Or AnchorStyles.Bottom _
+                Or AnchorStyles.Left Or AnchorStyles.Right,
+            .Name = "picture"} ' coupled with ESMT_Main_Window.Update_Active_Diagram
+        Me.Page.Controls.Add(Me.Picture)
     End Sub
 
 

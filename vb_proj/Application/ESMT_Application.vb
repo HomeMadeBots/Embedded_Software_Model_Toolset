@@ -42,7 +42,7 @@ Public Class ESMT_Application
             Me.Loaded_Project = Software_Project.Load(
                 project_file_path,
                 Me.Main_Window.Get_Browser(),
-                Me.Main_Window.Get_Diagram_Area())
+                Me.Main_Window.Get_Diagram_Zone())
 
             Me.Loaded_Project.Add_Predefined_Package()
 
@@ -82,7 +82,7 @@ Public Class ESMT_Application
                 prj_creation_form.Get_Element_Description(),
                 prj_creation_form.Get_File_Full_Path(),
                 Me.Main_Window.Get_Browser(),
-                Me.Main_Window.Get_Diagram_Area())
+                Me.Main_Window.Get_Diagram_Zone())
 
             Me.Loaded_Project.Add_Predefined_Package()
 

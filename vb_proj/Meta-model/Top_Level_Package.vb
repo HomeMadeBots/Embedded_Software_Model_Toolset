@@ -242,10 +242,6 @@ Public Class Top_Level_Package
         End If
     End Sub
 
-    Private Function Get_Project() As Software_Project
-        Return CType(Me.Node.Parent.Tag, Software_Project)
-    End Function
-
 
     ' -------------------------------------------------------------------------------------------- '
     ' Methods for contextual menu

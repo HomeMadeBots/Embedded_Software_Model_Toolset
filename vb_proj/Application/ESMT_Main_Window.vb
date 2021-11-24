@@ -5,10 +5,16 @@
     Private My_Application As ESMT_Application ' bidirectional association
 
     Private WithEvents Model_Browser As New TreeView
-    Private Diagram_Area As New TabControl
+    Private WithEvents Diagram_Pages As New TabControl
+    Private WithEvents Active_Page As TabPage
+    Private WithEvents Active_Picture As PictureBox
 
     Private WithEvents Menu_Load_Project As New ToolStripMenuItem
     Private WithEvents Menu_New_Project As New ToolStripMenuItem
+
+    Private tip As New ToolTip()
+
+    Private Diagram_Left_Mouse_Down As Boolean = False
 
 
     ' -------------------------------------------------------------------------------------------- '
@@ -47,7 +53,7 @@
         Dim vertical_split_container As New SplitContainer With {
             .Dock = DockStyle.Fill}
         vertical_split_container.Panel1.Controls.Add(Me.Model_Browser)
-        vertical_split_container.Panel2.Controls.Add(Me.Diagram_Area)
+        vertical_split_container.Panel2.Controls.Add(Me.Diagram_Pages)
         Me.Controls.Add(vertical_split_container)
 
 
@@ -73,7 +79,7 @@
 
         '------------------------------------------------------------------------------------------'
         ' Create diagram panel
-        With Me.Diagram_Area
+        With Me.Diagram_Pages
             .Dock = DockStyle.Fill
             .Anchor = AnchorStyles.Top Or AnchorStyles.Bottom _
                 Or AnchorStyles.Left Or AnchorStyles.Right
@@ -88,8 +94,8 @@
         Return Me.Model_Browser
     End Function
 
-    Public Function Get_Diagram_Area() As TabControl
-        Return Me.Diagram_Area
+    Public Function Get_Diagram_Zone() As TabControl
+        Return Me.Diagram_Pages
     End Function
 
     Public Sub Clear()
@@ -236,6 +242,73 @@
 
         ' Move elements
         dragged_element.Move(targeted_element)
+
+    End Sub
+
+
+    ' -------------------------------------------------------------------------------------------- '
+    ' Diagram_Area events
+    ' -------------------------------------------------------------------------------------------- '
+
+    Private Sub Set_First_Active_Diagram() Handles Diagram_Pages.ControlAdded
+        Me.Active_Page = Me.Diagram_Pages.SelectedTab
+        Me.Active_Picture = CType(Me.Active_Page.Controls.Item("picture"), PictureBox)
+        Me.Active_Picture.Invalidate()
+    End Sub
+
+    Private Sub Update_Active_Diagram() Handles Diagram_Pages.SelectedIndexChanged
+        Me.Active_Page = Me.Diagram_Pages.SelectedTab
+        Me.Active_Picture = CType(Me.Active_Page.Controls.Item("picture"), PictureBox)
+        ' coupled with Diagram.Create_Page_And_Picture
+        Me.Active_Picture.Invalidate()
+    End Sub
+
+    Private Sub Swow_Description(sender As Object, e As EventArgs) Handles Diagram_Pages.MouseHover
+        tip.Show(Me.Active_Page.ToolTipText, Me.Diagram_Pages)
+    End Sub
+
+    Private Sub Hide_Description(sender As Object, e As EventArgs) Handles Diagram_Pages.MouseLeave
+        tip.Hide(Me.Diagram_Pages)
+    End Sub
+
+    Private Sub Diagram_Mouse_Down(
+            ByVal sender As Object,
+            ByVal e As MouseEventArgs) Handles Active_Picture.MouseDown
+        If e.Button = MouseButtons.Left Then
+            Me.Diagram_Left_Mouse_Down = True
+            'MsgBox(e.X & "   " & e.Y)
+        End If
+    End Sub
+
+    Private Sub Diagram_Mouse_Up(
+            ByVal sender As Object,
+            ByVal e As MouseEventArgs) Handles Active_Picture.MouseUp
+        If e.Button = MouseButtons.Left Then
+            Me.Diagram_Left_Mouse_Down = False
+
+        End If
+    End Sub
+
+    Private Sub Diagram_Mouse_Move(
+            ByVal sender As Object,
+            ByVal e As MouseEventArgs) Handles Active_Picture.MouseMove
+        If Me.Diagram_Left_Mouse_Down = False Then
+            Exit Sub
+        End If
+
+
+        Me.Active_Picture.Invalidate()
+    End Sub
+
+    Private Sub Picture_Paint(
+            ByVal sender As Object,
+            ByVal e As PaintEventArgs) Handles Active_Picture.Paint
+        ' Get diagram
+        Dim active_diagram As Diagram
+        active_diagram = CType(Me.Active_Page.Tag, Diagram)
+
+        ' Redraw diagram
+        active_diagram.Draw(e.Graphics)
 
     End Sub
 
